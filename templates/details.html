@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/details.css">
+    <title>Details Page</title>
+</head>
+<body>
+    <header class="hd">
+        <a href="/"><h1>HOME</h1></a>
+        <form action="/search" method="post">
+            <textarea name="search" id=""></textarea>
+            <button type="submit">Search</button>
+        </form>
+    </header>
+    <div class="container">
+        <div class="userinfos">
+            <h1>Infos about {{.Name}}:</h1>
+            <h2  class="cc">The creation date is:</h2>
+            <p>&nbsp&nbsp{{.CreationDate}}/</p>
+            <h2  class="cc">&nbsp&nbspThe members are:</h2>
+                {{range .Members}}
+                    <p>&nbsp&nbsp{{.}} /&nbsp</p>
+                {{end}}
+            <h2  class="cc">&nbsp&nbspThe first album is:</h2>
+            <p>&nbsp&nbsp{{.FirstAlbum}}</p>
+       </div>
+       
+       <div class="hhh">
+        <div class="cc">
+            <h2>The upcoming/passed dates are:</h2>
+        </div>
+
+        {{range $key, $value := .Relations}}
+            <div class="relations">
+                <h3 class="cc">&nbsp{{ $key }}:</h3>
+                    {{range $value}}
+                             <p>&emsp;{{.}} /&nbsp</p>
+                         {{end}}
+                 </div>
+             {{end}}
+        
+            <h1 class="cc">locasations:</h1>
+        {{range .Localisations}}
+
+                <div class="relations">
+                    <p>&emsp;{{.}}</p>
+                </div>
+            {{end}}
+        </div>
+    </div>
+     </div>
+    <br><br>
+    <div class="center-button">
+        <a href="/"><button  class="return-button">Return</button></a><br>
+    </div>
+</body>
+</html>

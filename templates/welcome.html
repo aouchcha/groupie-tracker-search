@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/home.css">
+    <title>welcome</title>
+</head>
+<body>
+    <div class="search-bar">
+            <h1>Search</h1>
+            <form action="/search" method="get">
+                <textarea name="search" id=""></textarea>
+                <button type="submit">Search</button>
+            </form>
+        
+        </div>
+    <div class="artistcontainer">
+        {{range .}}
+        <div class="artist">
+                <a href="/artist?ID={{.ID}}" style="text-decoration: none; color: inherit;">
+                    <div class="card-content">
+                        <img class="imge" src="{{.Image}}" alt="Artist Image"><br><br>
+                        <strong style="font-size: 20px;">{{.Name}}</strong>
+                    </div>
+                </a>
+        </div>
+        {{end}}
+   </div>
+</body>
+</html>
