@@ -12,14 +12,10 @@
     </header>
     <div class="artistcontainer">
         {{range .}}
-        <div class="artist">
-                <a href="/artist?ID={{.ID}}" style="text-decoration: none; color: inherit;">
-                    <div class="card-content">
-                        <img class="imge" src="{{.Image}}" alt="Artist Image"><br><br>
-                        <strong style="font-size: 20px;">{{.Name}}</strong>
-                    </div>
+        <a class="artist" href="/artist?ID={{.ID}}" style="text-decoration: none; color: inherit;">
+                    <img class="imge" src="{{.Image}}" alt="Artist Image"><br>
+                    <strong>{{.Name}}</strong>
                 </a>
-        </div>
         {{end}}
    </div>
 </body>

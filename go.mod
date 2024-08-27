@@ -1,3 +1,3 @@
-module groupie-tracker
+module groupie-tracker-search
 
-go 1.22.3
+go 1.22.2

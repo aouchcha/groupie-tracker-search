@@ -1,7 +1,6 @@
 package functions
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -32,6 +31,7 @@ func ServeStyle(w http.ResponseWriter, r *http.Request) {
 }
 
 func FirstPage(w http.ResponseWriter, r *http.Request) {
+
 	tmpl, err := template.ParseFiles("templates/welcome.html")
 	tmpl1, err2 := template.ParseFiles("templates/errors.html")
 
@@ -45,7 +45,6 @@ func FirstPage(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	fmt.Println(r.URL.Path)
 	if r.URL.Path != "/" {
 		ChooseError(w, 404)
 		tmpl1.Execute(w, Error)
@@ -58,8 +57,6 @@ func FirstPage(w http.ResponseWriter, r *http.Request) {
 	}
 	tmpl.Execute(w, artists)
 }
-
-// var IND int
 
 func OtherPages(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("templates/details.html")
@@ -76,33 +73,27 @@ func OtherPages(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	fmt.Println(r.URL.Path)
 	if r.URL.Path != "/artist" {
-		// fmt.Println("vvvv")
 		ChooseError(w, 404)
 		tmpl1.Execute(w, Error)
 		return
 	}
 	max := artists[len(artists)-1].ID
-	fmt.Println(max)
 	url := r.URL.Query().Get("ID")
-	// fmt.Println(url)
 	index, err := strconv.Atoi(string(url))
 	if err != nil || index < 1 || index > max {
-		// fmt.Println("hna")
 		ChooseError(w, 404)
 		tmpl1.Execute(w, Error)
 		return
 	}
 	index -= 1
-	// IND = index
 	if r.Method != http.MethodGet {
 		ChooseError(w, 405)
 		tmpl1.Execute(w, Error)
 		return
 	}
 
-	artistinfo := struct {
+	artistinfos := struct {
 		ID            int
 		Name          string
 		Image         string
@@ -111,6 +102,7 @@ func OtherPages(w http.ResponseWriter, r *http.Request) {
 		FirstAlbum    string
 		Localisations []string
 		Relations     map[string][]string
+		Dates         []string
 	}{
 		ID:            artists[index].ID,
 		Name:          artists[index].Name,
@@ -120,19 +112,55 @@ func OtherPages(w http.ResponseWriter, r *http.Request) {
 		FirstAlbum:    artists[index].FirstAlbum,
 		Localisations: locals.Index[index].Location,
 		Relations:     rel.Index[index].DateLocations,
+		Dates:         dat.Index[index].Date,
 	}
-	tmpl.Execute(w, artistinfo)
+	tmpl.Execute(w, artistinfos)
 }
 
 func SearchPage(w http.ResponseWriter, r *http.Request) {
 	tmpl, _ := template.ParseFiles("./templates/search.html")
 	tmpl1, _ := template.ParseFiles("templates/errors.html")
+	types := r.FormValue("typessearch")
+	// fmt.Println(types)
+	text := strings.ToLower(strings.TrimSuffix(r.FormValue("search"), " "))
 
-	text := r.FormValue("search")
 	var ss []Artist
-	for i := range artists {
-		if strings.Contains(artists[i].Name, text) {
-			ss = append(ss, artists[i])
+	if types == "Band" || types == "fistalbum" || types == "creation" {
+		for i := range artists {
+			if strings.HasPrefix(strings.ToLower(artists[i].Name), text) || strings.HasPrefix(strings.ToLower(artists[i].FirstAlbum), text) || strings.HasPrefix(strings.ToLower(strconv.Itoa(artists[i].CreationDate)), text) {
+				ss = append(ss, artists[i])
+			}
+		}
+	} else if types == "Members" {
+		for i := range artists {
+			for j := range artists[i].Members {
+				if strings.HasPrefix(strings.ToLower(artists[i].Members[j]), text) {
+					ss = append(ss, artists[i])
+				}
+			}
+		}
+	} else if types == "location" {
+		for i := range locals.Index {
+			for j := range locals.Index[i].Location {
+				if strings.Contains(strings.ToLower(locals.Index[i].Location[j]), text) {
+					if len(ss) == 0 {
+						ss = append(ss, artists[locals.Index[i].Id-1])
+					} else {
+						var check bool
+						for k := range ss {
+							if ss[k].ID == locals.Index[i].Id {
+								check = true
+							} else {
+								check = false
+							}
+						}
+						if !check {
+							ss = append(ss, artists[locals.Index[i].Id-1])
+						}
+					}
+
+				}
+			}
 		}
 	}
 	if len(ss) == 0 {

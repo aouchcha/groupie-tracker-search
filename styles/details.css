@@ -1,130 +1,78 @@
-/* General body styles */
+
 body {
-    background-color: rgb(37, 37, 37); /* Background color */
-    color:rgb(22, 22, 20); /* Text color */
-    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Center horizontally */
-    min-height: 100vh; /* Full viewport height */
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    min-height: 100vh; 
+    background: black;
 }
 
-/* Heading styles */
+
 h1 {
     text-align: center;
-    padding-bottom: 15px; /* Bottom padding */
 }
 
-/* Container for userinfos and relations */
-.hhh {
-    display: flexbox;
-    align-items: center;
-    margin: auto;
-}
 
 .container {
-    display: grid;
-    justify-content: space-between; /* Space between the two sections */
-    grid-template-columns: 1fr 1fr; /* Two equal columns */
-    padding-top: 2%    ;
-    padding-right: 10%;
-}
-
-/* Styles for userinfos section */
-.userinfos {
-    display: flexbox;
-    text-align: center; /* Align text to the left */
-    border: 2px solid white; /* Border color */
-    border-radius: 15px;
-    background-color: orange; /* Background color */
-    margin: auto;
-}
-
-/* Styles for relations section */
-.relations {
-    display: grid;
+    display: flex;
     justify-content: space-between;
-    grid-template-columns: repeat(4, 1fr);
-    grid-gap: 10px;
-    border: 2px solid white; /* Border color */
-    border-radius: 15px;
-    background-color: orange; /* Background color */
-    text-align: center; /* Align text to the left */
+    flex-wrap: wrap;
 }
 
-/* Center button styling */
+
+.userinfos {
+    text-align: center;
+    flex-grow: 1; 
+    background: #1e4519;
+    margin: 2% 1%;
+    padding: 1% 0;
+    flex-wrap: wrap;
+}
+
+.userinfos:hover{
+    border: white solid;
+}
+marquee{
+    font-size: 32px;
+    font-weight: 700;
+}
 .center-button {
     display: flex;
-    justify-content: center; /* Center horizontally */
-    width: 100%; /* Full width to ensure centering */
-    padding: 50px; /* Padding around button */
+    justify-content: center; 
+    padding: 50px; 
 }
 
-/* Return button styling */
+
 .return-button {
-    background-color: orange; /* Button background color */
-    color: white; /* Button text color */
-    padding: 10px 20px; /* Padding inside button */
-    border: none; /* Remove default border */
-    border-radius: 5px; /* Rounded corners */
-    font-size: large; /* Font size */
-    cursor: pointer; /* Pointer cursor */
-    transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+    background: #1e4519;
+    color: white; 
+    padding: 10px 20px;
+    border: none; 
+    border-radius: 5px; 
+    font-size: large; 
+    cursor: pointer; 
 }
 
-/* Return button hover effect */
+
 .return-button:hover {
-    background-color: #000000; /* Darker shade on hover */
-    transform: scale(1.1); /* Slightly enlarge button on hover */
+    background-color: #000000; 
+    transform: scale(1.1);
 }
 
-/* Heading styles for sections */
-.head {
-    text-align: center; /* Center align heading */
-    font-style: italic; /* Italic text */
-    color: chartreuse; /* Heading color */
-}
-
-/* Custom class for colored headers */
 .cc {
-    color: rgb(255, 255, 255); /* Custom header color */
-    text-align: center; /* Align text to the left */
+    color: rgb(0, 0, 0); 
+    text-align: center; 
 }
-.hd{
-    background: linear-gradient(to right , #5252e9 , #fbe698);
+
+header{
+    background: #102e0c;
     color: #ffffff;
-    display: inline-flex;
-    justify-content: space-between;
-    text-align: center;
-    width: 100%;
-    margin-bottom: 4%;
+    width: 98%;
+    margin-bottom: 0%;
+    padding: 1%;
 }
-/* Responsive styles */
-@media (min-width: 320px) and (max-width: 1440px){
-    .container {
-        flex-direction: column; /* Stack sections vertically */
-        grid-template-columns: 1fr;
-        padding-top: 170px;
-    }
 
-    .userinfos, .relations {
-        width: 80%; /* Full width */
-        margin: 0 auto; /* Center horizontally */
-    }
-    body {
-        font-size: smaller; /* Smaller font size */
-    }
-
-    .head {
-        font-size: medium; /* Medium font size for headings */
-    }
-    
-    .return-button {
-        font-size: medium; /* Medium font size for button */
-    }
-
+p{
+    color: #ffffff;
 }
+
 

@@ -16,28 +16,37 @@ type Artist struct {
 	FirstAlbum   string   `json:"firstAlbum"`
 }
 
-type Dates struct {
-	Index []SubDates `json:"index"`
+type Relations struct {
+	Index []SubRel `json:"index"`
 }
 
-type SubDates struct {
+type SubRel struct {
 	Id            int                 `json:"id"`
 	DateLocations map[string][]string `json:"datesLocations"`
 }
 
 type Locations struct {
 	Index []SubLocal `json:"index"`
- }
+}
 
- type SubLocal struct {
-	Id int `json:"id"`
+type SubLocal struct {
+	Id       int      `json:"id"`
 	Location []string `json:"locations"`
- }
+}
+
+type Dates struct {
+	Index []SubDate `json:"index"`
+}
+type SubDate struct {
+	Id   int      `json:"id"`
+	Date []string `json:"dates"`
+}
 
 var (
 	artists []Artist
-	rel     Dates
-	locals Locations
+	rel     Relations
+	locals  Locations
+	dat     Dates
 )
 
 func GetArtistData() {
@@ -97,6 +106,27 @@ func GetLocationData() {
 	}
 
 	err = json.Unmarshal(body, &locals)
+	if err != nil {
+		fmt.Println("Error with JSON unmarshal:", err)
+		return
+	}
+}
+
+func GetDatesData() {
+	res, err := http.Get("https://groupietrackers.herokuapp.com/api/dates")
+	if err != nil {
+		fmt.Println("Error in getting the data from the artist link:", err)
+		return
+	}
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println("Error in reading the body:", err)
+		return
+	}
+
+	err = json.Unmarshal(body, &dat)
 	if err != nil {
 		fmt.Println("Error with JSON unmarshal:", err)
 		return

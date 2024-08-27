@@ -1,20 +1,21 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
-	f "groupie-tracker/functions"
+	f "groupie-tracker-search/functions"
 )
-
-// Define a struct that matches the JSON structure
 
 func main() {
 	f.GetArtistData()
 	f.GetRelationData()
 	f.GetLocationData()
+	f.GetDatesData()
 	http.HandleFunc("/styles/", f.ServeStyle)
 	http.HandleFunc("/", f.FirstPage)
 	http.HandleFunc("/artist", f.OtherPages)
 	http.HandleFunc("/search", f.SearchPage)
-	http.ListenAndServe(":9991", nil)
+	fmt.Println("http://localhost:6699/")
+	http.ListenAndServe(":6699", nil)
 }
