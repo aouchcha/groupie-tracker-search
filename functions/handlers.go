@@ -1,6 +1,7 @@
 package functions
 
 import (
+	"encoding/json"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -56,6 +57,44 @@ func FirstPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tmpl.Execute(w, artists)
+}
+
+func SuggestHandler(w http.ResponseWriter, r *http.Request) {
+	input := r.URL.Query().Get("search")
+
+	suggestions := getSuggestions(input)
+
+	w.Header().Set("Content-Type", "text/plain")
+	json.NewEncoder(w).Encode(suggestions)
+}
+
+func getSuggestions(input string) []string {
+	var suggestions []string
+	input = strings.ToLower(input)
+	for i := range artists {
+		if strings.HasPrefix(strings.ToLower(artists[i].Name), input) {
+			suggestions = append(suggestions, artists[i].Name+"-> Band")
+		}
+		if strings.HasPrefix(strings.ToLower(artists[i].FirstAlbum), input) {
+			suggestions = append(suggestions, artists[i].FirstAlbum+"-> First Album Date")
+		}
+		if strings.HasPrefix(strings.ToLower(strconv.Itoa(artists[i].CreationDate)), input) {
+			suggestions = append(suggestions, strconv.Itoa(artists[i].CreationDate)+"-> First Album Date")
+		}
+		for j := range artists[i].Members {
+			if strings.HasPrefix(strings.ToLower(artists[i].Members[j]), input) {
+				suggestions = append(suggestions, artists[i].Members[j]+"->Member")
+			}
+		}
+	}
+	for i := range locals.Index {
+		for j := range locals.Index[i].Location {
+			if strings.Contains(strings.ToLower(locals.Index[i].Location[j]), input) {
+				suggestions = append(suggestions, locals.Index[i].Location[j]+"->Location")
+			}
+		}
+	}
+	return suggestions
 }
 
 func OtherPages(w http.ResponseWriter, r *http.Request) {
@@ -123,6 +162,13 @@ func SearchPage(w http.ResponseWriter, r *http.Request) {
 	types := r.FormValue("typessearch")
 	// fmt.Println(types)
 	text := strings.ToLower(strings.TrimSuffix(r.FormValue("search"), " "))
+	temp := strings.Split(text, "->")
+	text = temp[0]
+	if text == "" {
+		ChooseError(w, 400)
+		tmpl1.Execute(w, Error)
+		return
+	}
 
 	var ss []Artist
 	if types == "Band" || types == "fistalbum" || types == "creation" {

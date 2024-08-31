@@ -4,40 +4,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles/home.css">
-    <title>welcome</title>
+    <title>Welcome</title>
+    <style>
+        /* Suggestion box styling */
+        .suggestions {
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+            position: absolute;
+            background-color: white;
+            width: calc(100% - 20px);
+            z-index: 1000;
+            margin-top: 2px;
+        }
+
+        .suggestion-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Additional styling for search bar container */
+        .search-bar {
+            position: relative;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
     <header class="search-bar">
         <marquee behavior="" direction="">Artist</marquee>
     </header>
     <div class="search-bar">
-            <h1>Search</h1>
-            <form action="/search" method="post">
-                <input type="text" name="search">
-               <label for="typessearch">Choose what you want serch for: </label>
-               <select name="typessearch" id="">
+        <h1>Search</h1>
+        <form action="/search" method="post">
+            <input type="text" name="search" id="search-input" autocomplete="off">
+            <label for="typessearch">Choose what you want to search for: </label>
+            <select name="typessearch" id="typessearch">
                 <option value="Band">Band Name</option>
                 <option value="Members">Members</option>
                 <option value="location">Locations</option>
-                <option value="fistalbum">First Albim Date</option>
+                <option value="firstalbum">First Album Date</option>
                 <option value="creation">Creation Date</option>
-               </select>
-                <button type="submit">Search</button>
-            </form>
-        
-        </div>
-        <div class="artistcontainer">
-            {{range .}}
-            <a class="artist" href="/artist?ID={{.ID}}" style="text-decoration: none; color: inherit;">
-                        <img class="imge" src="{{.Image}}" alt="Artist Image"><br>
-                        <strong>{{.Name}}</strong>
-                    </a>
-            {{end}}
-       </div>
-       <footer>
-            <p>Author : achraf OUCHCHATE</p>
-            <P>Github : aouchcha</P>
-            <p>email : ouchchatea@gmail.com</p>
-       </footer>
+            </select>
+            <button type="submit">Search</button>
+        </form>
+        <div id="suggestions" class="suggestions"></div>
+    </div>
+    <div class="artistcontainer">
+        {{range .}}
+        <a class="artist" href="/artist?ID={{.ID}}" style="text-decoration: none; color: inherit;">
+            <img class="imge" src="{{.Image}}" alt="Artist Image"><br>
+            <strong>{{.Name}}</strong>
+        </a>
+        {{end}}
+    </div>
+    <footer>
+        <p>Author: Achraf OUCHCHATE</p>
+        <p>Github: aouchcha</p>
+        <p>Email: ouchchatea@gmail.com</p>
+    </footer>
+
+    <script>
+        document.getElementById('search-input').addEventListener('input', function() {
+            const query = this.value;
+            const suggestionsBox = document.getElementById('suggestions');
+
+            if (query.length == 0) {
+                suggestionsBox.innerHTML = '';
+                return; 
+            }
+
+            fetch(`/suggest?search=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    let suggestionsHtml = '';
+                    data.forEach(item => {
+                        suggestionsHtml += `<div class="suggestion-item">${item}</div>`;
+                    });
+                    suggestionsBox.innerHTML = suggestionsHtml;
+                    
+                    document.querySelectorAll('.suggestion-item').forEach(function(element) {
+                        element.addEventListener('click', function() {
+                            document.getElementById('search-input').value = this.textContent;
+                            suggestionsBox.innerHTML = '';
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching suggestions:', error);
+                });
+        });
+    </script>
 </body>
 </html>
