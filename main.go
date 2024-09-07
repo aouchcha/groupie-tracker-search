@@ -18,6 +18,6 @@ func main() {
 
 	http.HandleFunc("/artist", f.OtherPages)
 	http.HandleFunc("/search", f.SearchPage)
-	fmt.Println("http://localhost:6699/")
-	http.ListenAndServe(":6699", nil)
+	fmt.Println("http://localhost:9370")
+	http.ListenAndServe(":9370", nil)
 }

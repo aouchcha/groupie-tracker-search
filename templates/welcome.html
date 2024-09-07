@@ -5,43 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles/home.css">
     <title>Welcome</title>
-    <style>
-        /* Suggestion box styling */
-        .suggestions {
-            border: 1px solid #ccc;
-            max-height: 150px;
-            overflow-y: auto;
-            position: absolute;
-            background-color: white;
-            width: calc(100% - 20px);
-            z-index: 1000;
-            margin-top: 2px;
-        }
-
-        .suggestion-item {
-            padding: 10px;
-            cursor: pointer;
-        }
-
-        .suggestion-item:hover {
-            background-color: #f0f0f0;
-        }
-
-        /* Additional styling for search bar container */
-        .search-bar {
-            position: relative;
-            margin-bottom: 20px;
-        }
-    </style>
 </head>
 <body>
-    <header class="search-bar">
+    <header>
         <marquee behavior="" direction="">Artist</marquee>
     </header>
     <div class="search-bar">
-        <h1>Search</h1>
-        <form action="/search" method="post">
-            <input type="text" name="search" id="search-input" autocomplete="off">
+        <form name="myForm" action="/search" method="post" onsubmit="return validateForm()" id="form">
+            <input type="text" placeholder="Enter something ..." name="search" class="search-input" id="search-input" autocomplete="off">
             <label for="typessearch">Choose what you want to search for: </label>
             <select name="typessearch" id="typessearch">
                 <option value="Band">Band Name</option>
@@ -56,7 +27,7 @@
     </div>
     <div class="artistcontainer">
         {{range .}}
-        <a class="artist" href="/artist?ID={{.ID}}" style="text-decoration: none; color: inherit;">
+        <a class="artist" href="/artist?ID={{.ID}}">
             <img class="imge" src="{{.Image}}" alt="Artist Image"><br>
             <strong>{{.Name}}</strong>
         </a>
@@ -69,35 +40,47 @@
     </footer>
 
     <script>
-        document.getElementById('search-input').addEventListener('input', function() {
-            const query = this.value;
-            const suggestionsBox = document.getElementById('suggestions');
-
-            if (query.length == 0) {
-                suggestionsBox.innerHTML = '';
-                return; 
+        function validateForm(){
+            const check = document.getElementById("form").textContent
+            if(check == ""){
+                alert("You didn't enter any thing to search.")
+                return false
             }
+        }
+        document.getElementById("search-input").addEventListener('input', function() {myFunc(this.value);});
+        const res = document.getElementById("suggestions");
 
-            fetch(`/suggest?search=${query}`)
-                .then(response => response.json())
+       
+        function myFunc(val) {
+            if (document.getElementById("search-input").value === ''){
+                res.innerHTML = ''
+                return
+            }
+            fetch(`/suggest?userinput=${val}`)
+                .then(response => response.text())
                 .then(data => {
-                    let suggestionsHtml = '';
-                    data.forEach(item => {
-                        suggestionsHtml += `<div class="suggestion-item">${item}</div>`;
-                    });
-                    suggestionsBox.innerHTML = suggestionsHtml;
-                    
-                    document.querySelectorAll('.suggestion-item').forEach(function(element) {
-                        element.addEventListener('click', function() {
-                            document.getElementById('search-input').value = this.textContent;
-                            suggestionsBox.innerHTML = '';
-                        });
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching suggestions:', error);
+                    const test = data.split("\n");
+                    let final = "";
+
+                    for (let i = 0; i < test.length; i++) {
+                        final += `<div class="suggestion-item">${test[i]}</div>`;
+                    }
+
+                    res.innerHTML = final;
+
+                    const suggestionItems = document.getElementsByClassName("suggestion-item");
+
+                for(let c of suggestionItems) {
+                        c.addEventListener("click", function() {myFunc2(c.textContent);});
+                    }
                 });
-        });
+                }
+
+
+            function myFunc2(element) {
+                document.getElementById("search-input").value = element;
+                res.innerHTML = '';
+            }
     </script>
 </body>
 </html>

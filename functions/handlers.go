@@ -1,7 +1,6 @@
 package functions
 
 import (
-	"encoding/json"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -60,12 +59,13 @@ func FirstPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func SuggestHandler(w http.ResponseWriter, r *http.Request) {
-	input := r.URL.Query().Get("search")
+	input := r.URL.Query().Get("userinput")
 
 	suggestions := getSuggestions(input)
-
 	w.Header().Set("Content-Type", "text/plain")
-	json.NewEncoder(w).Encode(suggestions)
+	for _, item := range suggestions {
+		w.Write([]byte(item + "\n"))
+	}
 }
 
 func getSuggestions(input string) []string {
@@ -93,6 +93,9 @@ func getSuggestions(input string) []string {
 				suggestions = append(suggestions, locals.Index[i].Location[j]+"->Location")
 			}
 		}
+	}
+	if suggestions == nil {
+		suggestions = append(suggestions, "There is no data like that")
 	}
 	return suggestions
 }
@@ -218,11 +221,11 @@ func SearchPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func ChooseError(w http.ResponseWriter, code int) {
-	if code == 404 {
+	if code == 404 || code == 0 {
 		Error.Title = "Error 404"
 		Error.Message = "The page web doesn't exist\nError 404"
-		Error.Code = code
-		w.WriteHeader(code)
+		Error.Code = 404
+		w.WriteHeader(404)
 	} else if code == 405 {
 		Error.Title = "Error 405"
 		Error.Message = "The method is not alloweded\nError 405"
