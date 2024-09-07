@@ -28,6 +28,29 @@ header{
     padding: 1%;
 }
 
+.center-button {
+    display: flex;
+    justify-content: center; 
+    padding: 50px; 
+}
+
+
+.return-button {
+    background: #1e4519;
+    color: white; 
+    padding: 10px 20px;
+    border: none; 
+    border-radius: 5px; 
+    font-size: large; 
+    cursor: pointer; 
+}
+
+
+.return-button:hover {
+    background-color: #000000; 
+    transform: scale(1.1);
+}
+
 strong{
     font-size: larger;
     color: #ffffffe1;

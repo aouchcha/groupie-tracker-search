@@ -31,7 +31,6 @@ func ServeStyle(w http.ResponseWriter, r *http.Request) {
 }
 
 func FirstPage(w http.ResponseWriter, r *http.Request) {
-
 	tmpl, err := template.ParseFiles("templates/welcome.html")
 	tmpl1, err2 := template.ParseFiles("templates/errors.html")
 
@@ -72,14 +71,14 @@ func getSuggestions(input string) []string {
 	var suggestions []string
 	input = strings.ToLower(input)
 	for i := range artists {
-		if strings.HasPrefix(strings.ToLower(artists[i].Name), input) {
+		if strings.Contains(strings.ToLower(artists[i].Name), input) {
 			suggestions = append(suggestions, artists[i].Name+"-> Band")
 		}
 		if strings.HasPrefix(strings.ToLower(artists[i].FirstAlbum), input) {
 			suggestions = append(suggestions, artists[i].FirstAlbum+"-> First Album Date")
 		}
 		if strings.HasPrefix(strings.ToLower(strconv.Itoa(artists[i].CreationDate)), input) {
-			suggestions = append(suggestions, strconv.Itoa(artists[i].CreationDate)+"-> First Album Date")
+			suggestions = append(suggestions, strconv.Itoa(artists[i].CreationDate)+"-> Creation Date")
 		}
 		for j := range artists[i].Members {
 			if strings.HasPrefix(strings.ToLower(artists[i].Members[j]), input) {
@@ -167,16 +166,30 @@ func SearchPage(w http.ResponseWriter, r *http.Request) {
 	text := strings.ToLower(strings.TrimSuffix(r.FormValue("search"), " "))
 	temp := strings.Split(text, "->")
 	text = temp[0]
-	if text == "" {
+	// fmt.Println(text)
+	if text == "" || text == "there is no data like that" {
 		ChooseError(w, 400)
 		tmpl1.Execute(w, Error)
 		return
 	}
 
 	var ss []Artist
-	if types == "Band" || types == "fistalbum" || types == "creation" {
+	if types == "Band" {
 		for i := range artists {
-			if strings.HasPrefix(strings.ToLower(artists[i].Name), text) || strings.HasPrefix(strings.ToLower(artists[i].FirstAlbum), text) || strings.HasPrefix(strings.ToLower(strconv.Itoa(artists[i].CreationDate)), text) {
+			if strings.HasPrefix(strings.ToLower(artists[i].Name), text) {
+				ss = append(ss, artists[i])
+			}
+		}
+	} else if types == "firstalbum" {
+		for i := range artists {
+			if (artists[i].FirstAlbum) == text {
+				ss = append(ss, artists[i])
+			}
+		}
+	} else if types == "creation" {
+		for i := range artists {
+			c, _ := strconv.Atoi(text)
+			if artists[i].CreationDate == c {
 				ss = append(ss, artists[i])
 			}
 		}
@@ -207,11 +220,11 @@ func SearchPage(w http.ResponseWriter, r *http.Request) {
 							ss = append(ss, artists[locals.Index[i].Id-1])
 						}
 					}
-
 				}
 			}
 		}
 	}
+	// fmt.Println(len(ss))
 	if len(ss) == 0 {
 		ChooseError(w, 1000)
 		tmpl1.Execute(w, Error)
@@ -221,8 +234,8 @@ func SearchPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func ChooseError(w http.ResponseWriter, code int) {
-	if code == 404 || code == 0 {
-		Error.Title = "Error 404"
+	if code == 404 {
+		Error.Title = "Error 4556564"
 		Error.Message = "The page web doesn't exist\nError 404"
 		Error.Code = 404
 		w.WriteHeader(404)
@@ -246,5 +259,10 @@ func ChooseError(w http.ResponseWriter, code int) {
 		Error.Message = "This page web is forbidden\nError 403"
 		Error.Code = code
 		w.WriteHeader(code)
+	} else if code == 1000 {
+		Error.Title = "Error 400"
+		Error.Message = "You're searching in the wrong field \n'Ex:saitama-japan->Location' in anther field 'Ex:Members'.\nError 400"
+		Error.Code = 400
+		w.WriteHeader(400)
 	}
 }

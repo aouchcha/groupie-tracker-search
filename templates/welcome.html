@@ -11,7 +11,7 @@
         <marquee behavior="" direction="">Artist</marquee>
     </header>
     <div class="search-bar">
-        <form name="myForm" action="/search" method="post" onsubmit="return validateForm()" id="form">
+        <form name="myForm" action="/search" method="post">
             <input type="text" placeholder="Enter something ..." name="search" class="search-input" id="search-input" autocomplete="off">
             <label for="typessearch">Choose what you want to search for: </label>
             <select name="typessearch" id="typessearch">
@@ -34,19 +34,12 @@
         {{end}}
     </div>
     <footer>
-        <p>Author: Achraf OUCHCHATE</p>
-        <p>Github: aouchcha</p>
-        <p>Email: ouchchatea@gmail.com</p>
+        <p>Authors: <br>Achraf OUCHCHATE,<br> ismail ICHI</p>
+        <p>Github: <br>aouchcha,<br> ItCHIRO29</p>
+        <p>Email: <br>ouchchatea@gmail.com,<br> ismailichi29@gmail.com</p>
     </footer>
 
     <script>
-        function validateForm(){
-            const check = document.getElementById("form").textContent
-            if(check == ""){
-                alert("You didn't enter any thing to search.")
-                return false
-            }
-        }
         document.getElementById("search-input").addEventListener('input', function() {myFunc(this.value);});
         const res = document.getElementById("suggestions");
 
